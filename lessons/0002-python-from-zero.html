@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2 — Python from Zero</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="progress-bar"><div class="fill" id="progress-fill" style="width: 14%"></div></div>
+
+<p class="lesson-meta">
+  <span>Lesson 2 of many</span>
+  <span>About 20 minutes</span>
+  <span>Goal: Python subset for building LLMs</span>
+</p>
+
+<h1>Python from Zero</h1>
+
+<p>You do not need all of Python. You need the four things that appear in every neural network: <strong>numbers, lists, functions, and loops.</strong> That is the lesson.</p>
+
+<div class="callout">
+  <strong>Why Python?</strong> Every major AI library — PyTorch, NumPy, Hugging Face — is Python. Karpathy builds GPT in Python. The AI Engineering from Scratch curriculum runs in Python. It is the language of this field.
+</div>
+
+<h2>1. Numbers and variables</h2>
+
+<p>A variable is a named box that holds a value.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+learning_rate = 0.001
+num_layers = 6
+temperature = 0.7
+
+print(learning_rate)   # 0.001
+print(num_layers * 2)  # 12
+</pre>
+
+<p>These three variables appear in almost every LLM you will ever work with. <code>learning_rate</code> controls how fast the model learns. <code>num_layers</code> is how many transformer blocks stack on top of each other. <code>temperature</code> controls how random the output is.</p>
+
+<h2>2. Lists</h2>
+
+<p>A list holds many values in order. In LLMs, lists hold tokens — the chunks of text the model processes.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+tokens = [15496, 11, 995, 0]   # "Hello, world!" as token IDs
+print(tokens[0])    # 15496  (first token)
+print(len(tokens))  # 4      (how many tokens)
+</pre>
+
+<p>When you type "Hello, world!" to an LLM, it does not see letters — it sees a list of numbers like this. Each number maps to a chunk of text in its vocabulary. This is called <strong>tokenisation</strong>.</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 80" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;font-family:Menlo,Consolas,monospace">
+    <text x="10" y="25" font-size="14" fill="#cdd6f4" font-family="system-ui">"Hello, world!"</text>
+    <text x="10" y="48" font-size="11" fill="#6c7280" font-family="system-ui">tokenise ↓</text>
+    <rect x="10" y="55" width="70" height="22" rx="4" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="45" y="70" text-anchor="middle" font-size="11" fill="#a6e3a1">15496</text>
+    <rect x="88" y="55" width="32" height="22" rx="4" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="104" y="70" text-anchor="middle" font-size="11" fill="#a6e3a1">11</text>
+    <rect x="128" y="55" width="55" height="22" rx="4" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="155" y="70" text-anchor="middle" font-size="11" fill="#a6e3a1">995</text>
+    <rect x="191" y="55" width="24" height="22" rx="4" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="203" y="70" text-anchor="middle" font-size="11" fill="#a6e3a1">0</text>
+    <text x="230" y="70" font-size="11" fill="#6c7280" font-family="system-ui">← list of integers</text>
+  </svg>
+</div>
+
+<h2>3. Functions</h2>
+
+<p>A function takes input, does something, returns output. You will write and read hundreds of these.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+def add(a, b):
+    return a + b
+
+result = add(3, 4)
+print(result)  # 7
+</pre>
+
+<p>In a transformer, every single operation — attention, feed-forward, layer normalisation — is a function. The model itself is a function: text in, text out.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+def gpt(prompt):
+    tokens = tokenise(prompt)
+    output = transformer(tokens)
+    return decode(output)
+
+response = gpt("The sky is")
+# "The sky is blue."
+</pre>
+
+<p>That is not real code yet — but it is exactly how a real GPT function works structurally. You will write this for real in Lesson 5.</p>
+
+<h2>4. Loops</h2>
+
+<p>A loop runs the same code many times. Training an LLM is fundamentally a loop: show the model text, measure how wrong it is, nudge it to be less wrong. Repeat millions of times.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+for step in range(10000):
+    loss = model.forward(batch)
+    loss.backward()
+    optimizer.step()
+
+    if step % 1000 == 0:
+        print(f"Step {step}: loss = {loss:.4f}")
+</pre>
+
+<p>Again — not real code yet. But this is the skeleton of every training loop you will write. <code>loss</code> measures how wrong the model is. <code>backward()</code> figures out what to adjust. <code>optimizer.step()</code> makes the adjustment. Loop until the model is good.</p>
+
+<div class="callout">
+  <strong>Notice:</strong> You just read a real training loop — even if you do not understand every word. That is the goal of these early lessons. Pattern recognition before full comprehension.
+</div>
+
+<h2>Putting it together</h2>
+
+<p>Here is a tiny working Python program that uses all four concepts. Read it — you will understand more than you expect.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+# A tiny fake "LLM" that predicts the next word
+
+vocabulary = ["hello", "world", "the", "sky", "is", "blue"]
+
+def predict_next(word):
+    pairs = {"the": "sky", "sky": "is", "is": "blue", "hello": "world"}
+    return pairs.get(word, "?")
+
+sentence = ["the"]
+
+for step in range(4):
+    last_word = sentence[-1]
+    next_word = predict_next(last_word)
+    sentence.append(next_word)
+
+print(sentence)
+# ['the', 'sky', 'is', 'blue']
+</pre>
+
+<p>This is a one-rule "LLM" — it predicts the next word from a lookup table. A real LLM does the same thing, but the lookup table has billions of entries and is learned from data instead of hand-coded.</p>
+
+<div class="source">
+  <div class="label">Where to run this code — free, in your browser</div>
+  <a href="https://colab.research.google.com/" target="_blank">Google Colab — free Python environment, no install needed</a>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Create a new notebook, paste the code above, press Shift+Enter. You just ran Python. Do this for every code block in this lesson.</p>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz" id="quiz-container">
+  <h3>Check your understanding</h3>
+  <div id="quiz-question" class="question"></div>
+  <div id="quiz-options" class="options"></div>
+  <div id="quiz-feedback" class="feedback"></div>
+  <button id="quiz-next" class="next-btn" style="display:none"></button>
+</div>
+
+<!-- TWEET THIS -->
+<div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
+  <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
+  <div id="tweet-text" style="font-size:.95rem;color:#1a1a1a;line-height:1.5;margin-bottom:.75rem">"An LLM is just a loop: show text, measure how wrong the prediction is, nudge weights, repeat millions of times. That's all training is. Learning Python today so I can build one from scratch. Day 2 of my AI journey. #BuildingAI #LearnInPublic"</div>
+  <a id="tweet-link" href="https://twitter.com/intent/tweet?text=An%20LLM%20is%20just%20a%20loop%3A%20show%20text%2C%20measure%20how%20wrong%20the%20prediction%20is%2C%20nudge%20weights%2C%20repeat%20millions%20of%20times.%20That%E2%80%99s%20all%20training%20is.%20Learning%20Python%20today%20so%20I%20can%20build%20one%20from%20scratch.%20Day%202%20of%20my%20AI%20journey.%20%23BuildingAI%20%23LearnInPublic" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+</div>
+
+<div class="ask-teacher">
+  <strong>Ask your teacher anything.</strong> Confused about any code above? Want to know what <code>loss.backward()</code> actually does? Just ask Claude directly.
+</div>
+
+<script>
+(function () {
+  var questions = [
+    {
+      q: "In an LLM, what does a list of integers like [15496, 11, 995] represent?",
+      options: [
+        "Random noise the model ignores",
+        "Tokenised text — chunks of words as numbers",
+        "The model's weight values",
+        "The output probabilities"
+      ],
+      correct: 1,
+      feedback: "Correct. Text is converted to token IDs (integers) before the LLM processes it. The model never sees raw letters."
+    },
+    {
+      q: "Training an LLM is fundamentally a ___.",
+      options: [
+        "Single function call that takes a few seconds",
+        "Database lookup across billions of entries",
+        "Loop that runs millions of times, adjusting weights each step",
+        "Search through pre-written answers"
+      ],
+      correct: 2,
+      feedback: "Correct. Training = loop. Each step: feed text in, measure error (loss), adjust weights (backward + optimizer.step), repeat."
+    },
+    {
+      q: "What is the key difference between your tiny fake LLM and a real one?",
+      options: [
+        "The real one uses a different programming language",
+        "The real one runs on the cloud, not locally",
+        "The real one's next-word table is learned from data, not hand-coded",
+        "The real one does not use loops"
+      ],
+      correct: 2,
+      feedback: "Correct. Structurally identical — both predict the next token. The difference is the real model learned its billions of rules from data rather than having them written by hand."
+    }
+  ];
+
+  var current = 0;
+  var answered = false;
+
+  var qEl = document.getElementById('quiz-question');
+  var oEl = document.getElementById('quiz-options');
+  var fEl = document.getElementById('quiz-feedback');
+  var nBtn = document.getElementById('quiz-next');
+  var progFill = document.getElementById('progress-fill');
+
+  function setProgress(pct) { progFill.style.width = pct + '%'; }
+
+  function renderQuestion() {
+    answered = false;
+    var q = questions[current];
+    setProgress(14 + (current / questions.length) * 20);
+    qEl.textContent = (current + 1) + ' / ' + questions.length + ' — ' + q.q;
+    fEl.textContent = '';
+    nBtn.style.display = 'none';
+    while (oEl.firstChild) oEl.removeChild(oEl.firstChild);
+    q.options.forEach(function (text, i) {
+      var btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = text;
+      btn.addEventListener('click', function () { answer(i); });
+      oEl.appendChild(btn);
+    });
+    if (current < questions.length - 1) {
+      nBtn.textContent = 'Next question →';
+      nBtn.onclick = function () { current++; renderQuestion(); };
+    } else {
+      nBtn.textContent = 'Finish lesson ✓';
+      nBtn.onclick = finish;
+    }
+  }
+
+  function answer(i) {
+    if (answered) return;
+    answered = true;
+    var q = questions[current];
+    var btns = oEl.querySelectorAll('.option');
+    btns[i].classList.add(i === q.correct ? 'correct' : 'wrong');
+    if (i !== q.correct) btns[q.correct].classList.add('correct');
+    fEl.textContent = (i === q.correct ? '✓ ' : '✗ Not quite. ') + q.feedback;
+    nBtn.style.display = 'inline-block';
+  }
+
+  function finish() {
+    var container = document.getElementById('quiz-container');
+    while (container.firstChild) container.removeChild(container.firstChild);
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:center;padding:1.5rem 0;font-family:system-ui,sans-serif';
+    var emoji = document.createElement('div');
+    emoji.textContent = '🎉';
+    emoji.style.cssText = 'font-size:2.5rem;margin-bottom:.5rem';
+    var title = document.createElement('div');
+    title.textContent = 'Lesson 2 complete.';
+    title.style.cssText = 'font-weight:700;font-size:1.1rem;margin-bottom:.75rem';
+    var msg = document.createElement('p');
+    msg.style.cssText = 'color:#666;font-size:.9rem;line-height:1.6;margin:0';
+    msg.textContent = 'Next step: paste the "tiny fake LLM" code into Google Colab and run it. Then post your tweet. When ready, ask: "What is the next lesson?"';
+    wrap.appendChild(emoji);
+    wrap.appendChild(title);
+    wrap.appendChild(msg);
+    container.appendChild(wrap);
+    setProgress(33);
+  }
+
+  renderQuestion();
+})();
+</script>
+
+</body>
+</html>

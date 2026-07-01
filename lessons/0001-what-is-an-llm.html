@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 — What Is an LLM?</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="progress-bar"><div class="fill" id="progress-fill" style="width: 8%"></div></div>
+
+<p class="lesson-meta">
+  <span>Lesson 1 of many</span>
+  <span>About 10 minutes</span>
+  <span>Goal: Build an LLM Product</span>
+</p>
+
+<h1>What Is an LLM?</h1>
+
+<p>Before you build anything with an LLM, you need one mental model that changes how you see everything. This lesson gives you that model.</p>
+
+<h2>The one-sentence truth</h2>
+
+<p>An LLM — Large Language Model — is a program that has read an enormous amount of human text and learned one skill: <strong>predicting what word comes next.</strong></p>
+
+<p>That is it. Everything else — coding help, creative writing, answering questions, summarising documents — is a consequence of doing that one thing extremely well, on an almost unimaginable scale.</p>
+
+<div class="diagram">
+  <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;font-family:system-ui,sans-serif">
+    <rect x="10" y="40" width="160" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="90" y="56" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="600">You type:</text>
+    <text x="90" y="72" text-anchor="middle" font-size="12" fill="#1e40af">"The sky is…"</text>
+    <line x1="172" y1="60" x2="218" y2="60" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="220" y="25" width="160" height="70" rx="8" fill="#1e1e2e" stroke="#4b5563" stroke-width="1.5"/>
+    <text x="300" y="52" text-anchor="middle" font-size="11" fill="#cdd6f4" font-weight="600">LLM</text>
+    <text x="300" y="68" text-anchor="middle" font-size="10" fill="#6c7280">"what word fits here?"</text>
+    <text x="300" y="84" text-anchor="middle" font-size="10" fill="#6c7280">blue: 41%  grey: 28%…</text>
+    <line x1="382" y1="60" x2="428" y2="60" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="430" y="40" width="160" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="510" y="56" text-anchor="middle" font-size="12" fill="#15803d" font-weight="600">Output:</text>
+    <text x="510" y="72" text-anchor="middle" font-size="12" fill="#15803d">"The sky is blue."</text>
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+      </marker>
+    </defs>
+  </svg>
+  <p style="margin-top:.75rem;font-size:.85rem;color:#666;font-family:system-ui,sans-serif">The LLM picks the most probable next word — then repeats until the response is done.</p>
+</div>
+
+<h2>Why does predicting words make it seem smart?</h2>
+
+<p>To predict what word comes next in "The capital of France is ___", the model has to have absorbed the fact that Paris is the capital of France. To predict the next line of code, it has to understand what the previous lines do.</p>
+
+<p>It learned all of this by reading a significant fraction of the internet, Wikipedia, books, code repositories, and scientific papers — hundreds of billions of words. The "intelligence" is compressed pattern-matching from that data.</p>
+
+<div class="callout">
+  <strong>Product builder's insight:</strong> You are not building the LLM. You are building the thing <em>around</em> it — the interface, the data pipeline, the prompts that shape its behaviour. The LLM is an engine. Your product is the car.
+</div>
+
+<h2>What "large" actually means</h2>
+
+<p>The "L" in LLM refers to the number of <strong>parameters</strong> — internal numbers adjusted during training to improve prediction. A small model might have 7 billion parameters. GPT-4 has an estimated 1.8 trillion.</p>
+
+<p>More parameters generally means better reasoning — but also requires more compute. Your RTX 5060 (8GB VRAM) runs 7B models comfortably. Anything larger needs the cloud.</p>
+
+<div class="diagram">
+  <div style="display:flex;gap:1rem;justify-content:center;align-items:flex-end;font-family:system-ui,sans-serif;font-size:.85rem;padding:.5rem 0">
+    <div style="text-align:center">
+      <div style="background:#dbeafe;border:1px solid #2563eb;border-radius:6px;width:80px;height:40px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1e40af">7B</div>
+      <div style="color:#666">Runs on<br>your GPU ✓</div>
+    </div>
+    <div style="text-align:center">
+      <div style="background:#fef9c3;border:1px solid #ca8a04;border-radius:6px;width:80px;height:70px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-weight:700;color:#92400e">13B</div>
+      <div style="color:#666">Slow on<br>your GPU ⚠️</div>
+    </div>
+    <div style="text-align:center">
+      <div style="background:#fee2e2;border:1px solid #dc2626;border-radius:6px;width:80px;height:110px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-weight:700;color:#991b1b">70B+</div>
+      <div style="color:#666">Needs cloud<br>or big GPU ✗</div>
+    </div>
+    <div style="text-align:center">
+      <div style="background:#f3e8ff;border:1px solid #9333ea;border-radius:6px;width:80px;height:160px;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-weight:700;color:#6b21a8;font-size:.8rem;text-align:center">GPT-4<br>~1.8T</div>
+      <div style="color:#666">Cloud only<br>(API) ☁️</div>
+    </div>
+  </div>
+</div>
+
+<h2>How your product will use an LLM</h2>
+
+<p>Every LLM product works the same way at the core:</p>
+
+<ol style="padding-left:1.4rem;margin-bottom:1rem">
+  <li style="margin-bottom:.5rem"><strong>Send text in</strong> — called a <em>prompt</em></li>
+  <li style="margin-bottom:.5rem"><strong>LLM generates text back</strong> — called a <em>completion</em></li>
+  <li style="margin-bottom:.5rem"><strong>Your product acts on that text</strong> — shows it, stores it, triggers something</li>
+</ol>
+
+<p>Building LLM products is mostly about steps 1 and 3: writing effective prompts and deciding what to do with the output. That is where your value as a builder lives.</p>
+
+<div class="source">
+  <div class="label">Primary source — watch after the quiz</div>
+  <a href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">Intro to Large Language Models — Andrej Karpathy (YouTube, 1 hour)</a>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Karpathy explains this exact mental model visually. Best single hour you can invest in understanding LLMs. No CS background needed.</p>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz" id="quiz-container">
+  <h3>Check your understanding</h3>
+  <div id="quiz-question" class="question"></div>
+  <div id="quiz-options" class="options"></div>
+  <div id="quiz-feedback" class="feedback"></div>
+  <button id="quiz-next" class="next-btn" style="display:none"></button>
+</div>
+
+<div class="ask-teacher">
+  <strong>Ask your teacher anything.</strong> Type your question directly to Claude — your AI teacher is right here in this session. Confused about parameters? Want to know how this applies to your product idea? Just ask.
+</div>
+
+<script>
+(function () {
+  var questions = [
+    {
+      q: "At its core, what is an LLM doing?",
+      options: [
+        "Searching a database of pre-written answers",
+        "Predicting the most likely next word",
+        "Looking up facts from the internet in real time",
+        "Running logical rules a human programmed"
+      ],
+      correct: 1,
+      feedback: "Correct. Everything else — reasoning, coding, creativity — emerges from doing next-word prediction extremely well at scale."
+    },
+    {
+      q: "Your RTX 5060 has 8GB of VRAM. Which model size runs well on it?",
+      options: [
+        "1.8 trillion parameters (GPT-4 scale)",
+        "70 billion parameters",
+        "7 billion parameters",
+        "All sizes run equally well"
+      ],
+      correct: 2,
+      feedback: "Correct. 7B models fit comfortably in 8GB VRAM with quantisation. 70B+ needs far more memory or cloud compute."
+    },
+    {
+      q: "As a product builder, what is the LLM to you?",
+      options: [
+        "The full product you are shipping",
+        "An engine you build your product around",
+        "Something you must train from scratch",
+        "A direct replacement for a search engine"
+      ],
+      correct: 1,
+      feedback: "Correct. You don't build the engine — you build the car. The LLM is infrastructure; your product is what you wrap around it."
+    }
+  ];
+
+  var current = 0;
+  var answered = false;
+
+  var qEl = document.getElementById('quiz-question');
+  var oEl = document.getElementById('quiz-options');
+  var fEl = document.getElementById('quiz-feedback');
+  var nBtn = document.getElementById('quiz-next');
+  var progFill = document.getElementById('progress-fill');
+
+  function setProgress(pct) {
+    progFill.style.width = pct + '%';
+  }
+
+  function renderQuestion() {
+    answered = false;
+    var q = questions[current];
+    setProgress(8 + (current / questions.length) * 25);
+
+    qEl.textContent = (current + 1) + ' / ' + questions.length + ' — ' + q.q;
+    fEl.textContent = '';
+    nBtn.style.display = 'none';
+
+    while (oEl.firstChild) oEl.removeChild(oEl.firstChild);
+
+    q.options.forEach(function (text, i) {
+      var btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = text;
+      btn.addEventListener('click', function () { answer(i); });
+      oEl.appendChild(btn);
+    });
+
+    if (current < questions.length - 1) {
+      nBtn.textContent = 'Next question →';
+      nBtn.onclick = function () { current++; renderQuestion(); };
+    } else {
+      nBtn.textContent = 'Finish lesson ✓';
+      nBtn.onclick = finish;
+    }
+  }
+
+  function answer(i) {
+    if (answered) return;
+    answered = true;
+    var q = questions[current];
+    var btns = oEl.querySelectorAll('.option');
+    btns[i].classList.add(i === q.correct ? 'correct' : 'wrong');
+    if (i !== q.correct) btns[q.correct].classList.add('correct');
+    fEl.textContent = (i === q.correct ? '✓ ' : '✗ Not quite. ') + q.feedback;
+    nBtn.style.display = 'inline-block';
+  }
+
+  function finish() {
+    var container = document.getElementById('quiz-container');
+    while (container.firstChild) container.removeChild(container.firstChild);
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:center;padding:1.5rem 0;font-family:system-ui,sans-serif';
+
+    var emoji = document.createElement('div');
+    emoji.textContent = '🎉';
+    emoji.style.cssText = 'font-size:2.5rem;margin-bottom:.5rem';
+
+    var title = document.createElement('div');
+    title.textContent = 'Lesson complete.';
+    title.style.cssText = 'font-weight:700;font-size:1.1rem;margin-bottom:.75rem';
+
+    var msg = document.createElement('p');
+    msg.style.cssText = 'color:#666;font-size:.9rem;line-height:1.6;margin:0';
+    msg.textContent = 'Now watch the Andrej Karpathy video linked above — it will make everything click visually. When ready, ask your teacher: "What is the next lesson?"';
+
+    wrap.appendChild(emoji);
+    wrap.appendChild(title);
+    wrap.appendChild(msg);
+    container.appendChild(wrap);
+    setProgress(33);
+  }
+
+  renderQuestion();
+})();
+</script>
+
+</body>
+</html>

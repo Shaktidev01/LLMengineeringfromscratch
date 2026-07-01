@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Engineering from Scratch</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .hero { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .hero .subtitle { font-family: system-ui, sans-serif; font-size: 1.05rem; color: var(--muted); margin-top: .5rem; margin-bottom: 1.5rem; }
+  .links { display: flex; gap: 1rem; font-family: system-ui, sans-serif; font-size: .9rem; }
+  .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .links a:hover { text-decoration: underline; }
+
+  .lesson-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .75rem; }
+  .lesson-card {
+    display: flex; align-items: center; gap: 1rem;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.2rem;
+    box-shadow: var(--shadow); text-decoration: none; color: var(--text);
+    transition: border-color .15s, box-shadow .15s;
+    font-family: system-ui, sans-serif;
+  }
+  .lesson-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(37,99,235,.1); }
+  .lesson-card.locked { opacity: .45; pointer-events: none; }
+  .lesson-num {
+    font-size: .8rem; font-weight: 700; color: var(--accent);
+    background: var(--accent-light); border-radius: 4px;
+    padding: .2rem .5rem; white-space: nowrap;
+    font-family: system-ui, sans-serif;
+  }
+  .lesson-card.locked .lesson-num { background: var(--border); color: var(--muted); }
+  .lesson-title { font-weight: 600; font-size: .95rem; }
+  .lesson-meta-inline { font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+  .badge-done { margin-left: auto; font-size: .75rem; color: var(--correct); font-weight: 600; white-space: nowrap; }
+  .badge-soon { margin-left: auto; font-size: .75rem; color: var(--muted); white-space: nowrap; }
+
+  .phase { font-family: system-ui, sans-serif; font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: 2rem; margin-bottom: .75rem; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>LLM Engineering<br>from Scratch</h1>
+  <p class="subtitle">Building an LLM from zero — every lesson documented publicly, one commit at a time.<br>No CS degree. Just curiosity, a GPU, and stubbornness.</p>
+  <div class="links">
+    <a href="https://github.com/sahithiankareddi685/LLMengineeringfromscratch" target="_blank">GitHub →</a>
+    <a href="https://twitter.com/search?q=%23LLMengineeringfromscratch" target="_blank">Twitter / X →</a>
+    <a href="RESOURCES.md" target="_blank">Resources →</a>
+  </div>
+</div>
+
+<div class="phase">Phase 1 — Mental Models &amp; Foundations</div>
+<ul class="lesson-list">
+
+  <li>
+    <a class="lesson-card" href="lessons/0001-what-is-an-llm.html">
+      <span class="lesson-num">01</span>
+      <div>
+        <div class="lesson-title">What Is an LLM?</div>
+        <div class="lesson-meta-inline">Next-word prediction · parameters · product builder's mental model</div>
+      </div>
+      <span class="badge-done">✓ done</span>
+    </a>
+  </li>
+
+  <li>
+    <a class="lesson-card" href="lessons/0002-python-from-zero.html">
+      <span class="lesson-num">02</span>
+      <div>
+        <div class="lesson-title">Python from Zero</div>
+        <div class="lesson-meta-inline">Variables · lists · functions · loops · tiny fake LLM</div>
+      </div>
+      <span class="badge-done">✓ done</span>
+    </a>
+  </li>
+
+  <li>
+    <a class="lesson-card locked" href="#">
+      <span class="lesson-num">03</span>
+      <div>
+        <div class="lesson-title">Math Intuition — Vectors &amp; Matrices</div>
+        <div class="lesson-meta-inline">Tensors without calculus · why dimensions matter · visual understanding</div>
+      </div>
+      <span class="badge-soon">coming soon</span>
+    </a>
+  </li>
+
+  <li>
+    <a class="lesson-card locked" href="#">
+      <span class="lesson-num">04</span>
+      <div>
+        <div class="lesson-title">PyTorch from Zero</div>
+        <div class="lesson-meta-inline">Tensors · gradients · your first training loop</div>
+      </div>
+      <span class="badge-soon">coming soon</span>
+    </a>
+  </li>
+
+  <li>
+    <a class="lesson-card locked" href="#">
+      <span class="lesson-num">05</span>
+      <div>
+        <div class="lesson-title">Build a Tiny GPT from Scratch</div>
+        <div class="lesson-meta-inline">Transformer architecture · attention · train on your GPU</div>
+      </div>
+      <span class="badge-soon">coming soon</span>
+    </a>
+  </li>
+
+</ul>
+
+<div class="phase">Phase 2 — Running Real LLMs</div>
+<ul class="lesson-list">
+
+  <li>
+    <a class="lesson-card locked" href="#">
+      <span class="lesson-num">06</span>
+      <div>
+        <div class="lesson-title">Run LLMs Locally with Ollama</div>
+        <div class="lesson-meta-inline">Llama 3.1 on RTX 5060 · quantisation · prompting via terminal</div>
+      </div>
+      <span class="badge-soon">coming soon</span>
+    </a>
+  </li>
+
+  <li>
+    <a class="lesson-card locked" href="#">
+      <span class="lesson-num">07</span>
+      <div>
+        <div class="lesson-title">Build Your First LLM App</div>
+        <div class="lesson-meta-inline">Python · API calls · input → LLM → output</div>
+      </div>
+      <span class="badge-soon">coming soon</span>
+    </a>
+  </li>
+
+</ul>
+
+<div style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)">
+  Built in public · <a href="https://github.com/sahithiankareddi685/LLMengineeringfromscratch" style="color:var(--accent)">open source on GitHub</a> · inspired by <a href="https://aiengineeringfromscratch.com" style="color:var(--accent)">AI Engineering from Scratch</a>
+</div>
+
+</body>
+</html>
