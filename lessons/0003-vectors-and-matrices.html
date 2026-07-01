@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3 — Vectors & Matrices</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+  .vec-box {
+    display: inline-flex; flex-direction: column; align-items: center;
+    background: #1e1e2e; border-radius: 6px; padding: .6rem .8rem;
+    font-family: Menlo, Consolas, monospace; font-size: .85rem;
+    color: #cdd6f4; gap: .15rem; vertical-align: middle;
+  }
+  .vec-box .bracket { color: #6c7280; font-size: 1.2rem; line-height: 1; }
+  .vec-label { font-family: system-ui, sans-serif; font-size: .8rem; color: var(--muted); margin-top: .4rem; text-align: center; }
+  .mat-box {
+    display: inline-grid; background: #1e1e2e; border-radius: 6px;
+    padding: .6rem .9rem; font-family: Menlo, Consolas, monospace;
+    font-size: .82rem; color: #cdd6f4; gap: .1rem .6rem;
+    vertical-align: middle;
+  }
+  .op-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin: 1.2rem 0; }
+  .op-sym { font-size: 1.4rem; color: var(--muted); font-family: system-ui; }
+  .highlight-num { color: #a6e3a1; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="fill" id="progress-fill" style="width: 28%"></div></div>
+
+<p class="lesson-meta">
+  <span>Lesson 3 of many</span>
+  <span>About 15 minutes</span>
+  <span>No calculus — just shapes</span>
+</p>
+
+<h1>Vectors &amp; Matrices</h1>
+
+<p>Every single token in an LLM is a vector. Every single layer in a transformer is a matrix operation. You cannot build a GPT without these two shapes. This lesson makes them feel obvious.</p>
+
+<div class="callout">
+  <strong>Promise:</strong> No calculus. No proofs. No exams. Just what these things are and why transformers need them.
+</div>
+
+<h2>1. A vector is a list of numbers</h2>
+
+<p>That is the whole definition. A vector is a list of numbers.</p>
+
+<div style="text-align:center;margin:1.5rem 0">
+  <div class="vec-box">
+    <span class="bracket">[</span>
+    <span>0.2</span>
+    <span>-0.4</span>
+    <span>0.9</span>
+    <span class="bracket">]</span>
+  </div>
+  <div class="vec-label">a vector with 3 numbers</div>
+</div>
+
+<p>In Python, you already saw this in Lesson 2 — it is just a list:</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+v = [0.2, -0.4, 0.9]   # this is a vector
+</pre>
+
+<p>What makes it a <em>vector</em> vs just a list? Context — you intend those numbers to mean something together, not separately.</p>
+
+<h2>2. Words are vectors — this is the key idea</h2>
+
+<p>When an LLM reads the word "king", it does not see the letters K-I-N-G. It converts that word into a vector — hundreds of numbers — that encodes meaning.</p>
+
+<div style="text-align:center;margin:1.5rem 0">
+  <div class="vec-box">
+    <span class="bracket">[</span>
+    <span class="highlight-num">0.87</span>
+    <span>-0.12</span>
+    <span>0.44</span>
+    <span>0.03</span>
+    <span style="color:#6c7280">... 508 more ...</span>
+    <span class="bracket">]</span>
+  </div>
+  <div class="vec-label">"king" as a 512-number vector (embedding)</div>
+</div>
+
+<p>This is called an <strong>embedding</strong>. Every word, every token, every sentence gets turned into a vector before the transformer ever sees it.</p>
+
+<p>Why? Because vectors can do something letters cannot: <strong>arithmetic on meaning.</strong></p>
+
+<div class="diagram">
+  <svg viewBox="0 0 560 60" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;font-family:system-ui,sans-serif;font-size:14px">
+    <text x="10" y="35" font-weight="700" fill="#1a1a1a">king</text>
+    <text x="55" y="35" fill="#94a3b8">−</text>
+    <text x="72" y="35" fill="#1a1a1a">man</text>
+    <text x="107" y="35" fill="#94a3b8">+</text>
+    <text x="124" y="35" fill="#1a1a1a">woman</text>
+    <text x="185" y="35" fill="#94a3b8">≈</text>
+    <rect x="200" y="18" width="70" height="28" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="235" y="36" text-anchor="middle" font-weight="700" fill="#15803d">queen</text>
+    <text x="285" y="35" fill="#94a3b8" font-size="12">← vector arithmetic finds this</text>
+  </svg>
+  <p style="margin-top:.5rem;font-size:.85rem;color:#666;font-family:system-ui,sans-serif">Subtract the "man" direction, add the "woman" direction — the result is closest to "queen". This is real. It works.</p>
+</div>
+
+<h2>3. Vectors have a size — and size matters</h2>
+
+<p>The number of numbers in a vector is called its <strong>dimension</strong>. GPT-2 small uses 768-dimensional word vectors. GPT-3 uses 12,288.</p>
+
+<p>More dimensions = more capacity to encode subtle meaning. A 3-dimensional "king" vector could capture royalty, gender, and maybe age. A 768-dimensional vector captures hundreds of subtle relationships.</p>
+
+<div class="diagram" style="font-family:system-ui,sans-serif;font-size:.85rem">
+  <div style="display:flex;gap:1.5rem;justify-content:center;align-items:flex-end">
+    <div style="text-align:center">
+      <div style="background:#dbeafe;border:1px solid #2563eb;border-radius:4px;width:30px;height:30px;margin:0 auto .3rem"></div>
+      <div style="color:#666">dim=3<br>tiny</div>
+    </div>
+    <div style="text-align:center">
+      <div style="background:#dbeafe;border:1px solid #2563eb;border-radius:4px;width:60px;height:60px;margin:0 auto .3rem"></div>
+      <div style="color:#666">dim=768<br>GPT-2</div>
+    </div>
+    <div style="text-align:center">
+      <div style="background:#dbeafe;border:1px solid #2563eb;border-radius:4px;width:100px;height:100px;margin:0 auto .3rem"></div>
+      <div style="color:#666">dim=12288<br>GPT-3</div>
+    </div>
+  </div>
+</div>
+
+<h2>4. A matrix is a grid of numbers</h2>
+
+<p>A matrix is just a table of numbers. Rows and columns.</p>
+
+<div style="text-align:center;margin:1.5rem 0">
+  <div class="mat-box" style="grid-template-columns:repeat(3,auto)">
+    <span>2</span><span>0</span><span>1</span>
+    <span>-1</span><span>3</span><span>0</span>
+    <span>0</span><span>1</span><span>4</span>
+  </div>
+  <div class="vec-label">a 3×3 matrix (3 rows, 3 columns)</div>
+</div>
+
+<p>In Python / PyTorch, a matrix is a list of lists:</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+M = [[2,  0,  1],
+     [-1, 3,  0],
+     [0,  1,  4]]
+</pre>
+
+<h2>5. Matrix × vector = the core of every transformer</h2>
+
+<p>Here is the one operation that runs millions of times inside a transformer: you multiply a matrix by a vector to get a new vector.</p>
+
+<div class="op-row" style="justify-content:center">
+  <div>
+    <div class="mat-box" style="grid-template-columns:repeat(3,auto)">
+      <span>2</span><span>0</span><span>1</span>
+      <span>-1</span><span>3</span><span>0</span>
+    </div>
+    <div class="vec-label">2×3 matrix</div>
+  </div>
+  <span class="op-sym">×</span>
+  <div>
+    <div class="vec-box">
+      <span class="bracket">[</span>
+      <span>1</span><span>2</span><span>3</span>
+      <span class="bracket">]</span>
+    </div>
+    <div class="vec-label">input vector</div>
+  </div>
+  <span class="op-sym">=</span>
+  <div>
+    <div class="vec-box">
+      <span class="bracket">[</span>
+      <span class="highlight-num">5</span>
+      <span class="highlight-num">5</span>
+      <span class="bracket">]</span>
+    </div>
+    <div class="vec-label">output vector</div>
+  </div>
+</div>
+
+<p>The matrix is not data — it is a <strong>transformation</strong>. It takes an input vector (the word embedding) and produces an output vector (a new representation). This is how attention works. This is how feed-forward layers work. Every layer in a transformer is this operation, repeated.</p>
+
+<div class="callout">
+  <strong>Mental model:</strong> The matrix is the model's "learned knowledge." The vector is the current word/token. Multiplying them applies what the model knows to what it is looking at right now.
+</div>
+
+<h2>6. Tensors — just more dimensions</h2>
+
+<p>PyTorch calls everything a <strong>tensor</strong>. A tensor is just the general word:</p>
+
+<ul style="padding-left:1.4rem;margin-bottom:1rem;line-height:2">
+  <li>One list of numbers → <strong>1D tensor</strong> (a vector)</li>
+  <li>Grid of numbers → <strong>2D tensor</strong> (a matrix)</li>
+  <li>Stack of matrices → <strong>3D tensor</strong> (a batch of tokens)</li>
+  <li>Stack of stacks → <strong>4D tensor</strong> (a batch of sequences)</li>
+</ul>
+
+<p>When you feed 8 sentences of 512 tokens each into a transformer, the input is a 3D tensor: shape <code>[8, 512, 768]</code> — 8 sequences, 512 tokens each, 768 dimensions per token.</p>
+
+<div class="source">
+  <div class="label">Primary source — watch this after the quiz</div>
+  <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">Let's build GPT from scratch — Andrej Karpathy (YouTube, 2hr)</a>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Start at 0:00 — the first 20 minutes walk through exactly these shapes in real PyTorch code. Pause and run along. This is Lesson 4's prep.</p>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz" id="quiz-container">
+  <h3>Check your understanding</h3>
+  <div id="quiz-question" class="question"></div>
+  <div id="quiz-options" class="options"></div>
+  <div id="quiz-feedback" class="feedback"></div>
+  <button id="quiz-next" class="next-btn" style="display:none"></button>
+</div>
+
+<!-- TWEET THIS -->
+<div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
+  <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
+  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.5;margin-bottom:.75rem">"Day 3 of building an LLM from scratch with zero CS background.<br><br>Mind-blowing insight: when GPT reads 'king', it doesn't see letters. It sees a list of 768 numbers. And king − man + woman ≈ queen. Vector arithmetic on meaning.<br><br>This is real. It works. #LLMengineeringfromscratch"</div>
+  <a href="https://twitter.com/intent/tweet?text=Day%203%20of%20building%20an%20LLM%20from%20scratch%20with%20zero%20CS%20background.%0A%0AMind-blowing%20insight%3A%20when%20GPT%20reads%20%22king%22%2C%20it%20doesn%27t%20see%20letters.%20It%20sees%20a%20list%20of%20768%20numbers.%20And%20king%20%E2%88%92%20man%20%2B%20woman%20%E2%89%88%20queen.%20Vector%20arithmetic%20on%20meaning.%0A%0AThis%20is%20real.%20It%20works.%20%23LLMengineeringfromscratch" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+</div>
+
+<p style="font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)">
+  ← <a href="0002-python-from-zero.html">Lesson 2: Python from Zero</a>
+</p>
+
+<div class="ask-teacher">
+  <strong>Ask your teacher anything.</strong> Want to see the king−man+woman math with actual numbers? Confused about dimensions? Just ask Claude directly.
+</div>
+
+<script>
+(function () {
+  var questions = [
+    {
+      q: "When an LLM reads the word 'king', what does it actually process?",
+      options: [
+        "The four letters K, I, N, G stored as characters",
+        "A lookup in a pre-written answer database",
+        "A vector — a list of hundreds of numbers encoding meaning",
+        "A single integer ID with no further processing"
+      ],
+      correct: 2,
+      feedback: "Correct. Every token becomes a vector (embedding) before the transformer processes it. The letters are gone — only numbers remain."
+    },
+    {
+      q: "What is a matrix in the context of a transformer?",
+      options: [
+        "A list of training examples",
+        "A grid of learned numbers that transforms one vector into another",
+        "The output text from the model",
+        "A type of activation function"
+      ],
+      correct: 1,
+      feedback: "Correct. The matrix holds the model's learned knowledge. Multiplying it by a token vector applies that knowledge to the current input."
+    },
+    {
+      q: "A batch of 8 sentences, each 512 tokens long, with 768-dim embeddings — what shape is the tensor?",
+      options: [
+        "[768]",
+        "[512, 768]",
+        "[8, 512, 768]",
+        "[8, 768]"
+      ],
+      correct: 2,
+      feedback: "Correct. 3D tensor: [batch_size, sequence_length, embedding_dim] = [8, 512, 768]. This shape appears constantly in transformer code."
+    }
+  ];
+
+  var current = 0;
+  var answered = false;
+  var qEl = document.getElementById('quiz-question');
+  var oEl = document.getElementById('quiz-options');
+  var fEl = document.getElementById('quiz-feedback');
+  var nBtn = document.getElementById('quiz-next');
+  var progFill = document.getElementById('progress-fill');
+
+  function setProgress(pct) { progFill.style.width = pct + '%'; }
+
+  function renderQuestion() {
+    answered = false;
+    var q = questions[current];
+    setProgress(28 + (current / questions.length) * 20);
+    qEl.textContent = (current + 1) + ' / ' + questions.length + ' — ' + q.q;
+    fEl.textContent = '';
+    nBtn.style.display = 'none';
+    while (oEl.firstChild) oEl.removeChild(oEl.firstChild);
+    q.options.forEach(function (text, i) {
+      var btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = text;
+      btn.addEventListener('click', function () { answer(i); });
+      oEl.appendChild(btn);
+    });
+    nBtn.textContent = current < questions.length - 1 ? 'Next question →' : 'Finish lesson ✓';
+    nBtn.onclick = current < questions.length - 1
+      ? function () { current++; renderQuestion(); }
+      : finish;
+  }
+
+  function answer(i) {
+    if (answered) return;
+    answered = true;
+    var q = questions[current];
+    var btns = oEl.querySelectorAll('.option');
+    btns[i].classList.add(i === q.correct ? 'correct' : 'wrong');
+    if (i !== q.correct) btns[q.correct].classList.add('correct');
+    fEl.textContent = (i === q.correct ? '✓ ' : '✗ Not quite. ') + q.feedback;
+    nBtn.style.display = 'inline-block';
+  }
+
+  function finish() {
+    var container = document.getElementById('quiz-container');
+    while (container.firstChild) container.removeChild(container.firstChild);
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:center;padding:1.5rem 0;font-family:system-ui,sans-serif';
+    var emoji = document.createElement('div');
+    emoji.textContent = '🎉';
+    emoji.style.cssText = 'font-size:2.5rem;margin-bottom:.5rem';
+    var title = document.createElement('div');
+    title.textContent = 'Lesson 3 complete.';
+    title.style.cssText = 'font-weight:700;font-size:1.1rem;margin-bottom:.75rem';
+    var msg = document.createElement('p');
+    msg.style.cssText = 'color:#666;font-size:.9rem;line-height:1.6;margin:0';
+    msg.textContent = 'Post your tweet. Then watch the first 20 minutes of the Karpathy GPT video above — you will now understand every tensor shape he mentions. Ask: "What is the next lesson?" when ready.';
+    wrap.appendChild(emoji);
+    wrap.appendChild(title);
+    wrap.appendChild(msg);
+    container.appendChild(wrap);
+    setProgress(48);
+  }
+
+  renderQuestion();
+})();
+</script>
+
+</body>
+</html>
