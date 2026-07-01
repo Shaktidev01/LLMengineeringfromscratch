@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4 — PyTorch from Zero</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="progress-bar"><div class="fill" id="progress-fill" style="width: 38%"></div></div>
+
+<p class="lesson-meta">
+  <span>Lesson 4 of many</span>
+  <span>About 20 minutes</span>
+  <span>Goal: Real tensors, real gradients, real training loop</span>
+</p>
+
+<h1>PyTorch from Zero</h1>
+
+<p>You have seen vectors, matrices, and tensors as ideas. Now you will hold them in real code. PyTorch is the library that lets Python do tensor math on your GPU — and more importantly, lets it <em>remember every operation</em> so it can figure out how to improve itself.</p>
+
+<div class="callout">
+  <strong>One sentence:</strong> PyTorch = tensors + automatic gradient computation. Everything else in deep learning is built on these two things.
+</div>
+
+<h2>1. Creating tensors</h2>
+
+<p>A PyTorch tensor is exactly what you learned in Lesson 3 — a list of numbers — but one that can run on your GPU and track gradients.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+import torch
+
+# Create tensors from Python lists (just like Lesson 2/3)
+x = torch.tensor([1.0, 2.0, 3.0])
+print(x)         # tensor([1., 2., 3.])
+print(x.shape)   # torch.Size([3])   ← it's a 3-dim vector
+
+# 2D tensor (matrix)
+M = torch.tensor([[1.0, 2.0],
+                  [3.0, 4.0]])
+print(M.shape)   # torch.Size([2, 2])
+</pre>
+
+<p>Notice <code>.shape</code> — you will read this constantly in transformer code. Every tensor has a shape; every bug is usually a shape mismatch.</p>
+
+<h2>2. Tensor operations — the same math as Lesson 3</h2>
+
+<p>The operations from Lesson 3 are real PyTorch code.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+a = torch.tensor([1.0, 2.0, 3.0])
+b = torch.tensor([4.0, 5.0, 6.0])
+
+print(a + b)    # tensor([5., 7., 9.])   ← element-wise add
+print(a * b)    # tensor([ 4., 10., 18.]) ← element-wise multiply
+
+# Matrix multiply — the core of every transformer layer
+A = torch.tensor([[2.0, 0.0],
+                  [1.0, 3.0]])
+v = torch.tensor([1.0, 2.0])
+
+print(A @ v)    # tensor([2., 7.])  ← matrix × vector from Lesson 3
+</pre>
+
+<p>The <code>@</code> operator is matrix multiply. You will see it everywhere in transformer code. Every attention head, every feed-forward layer, every projection — all <code>@</code>.</p>
+
+<h2>3. The magic: automatic gradients</h2>
+
+<p>This is the part that makes deep learning possible. When you train an LLM, you need to know: <em>for each weight in the model, how much does changing it reduce the loss?</em> Computing this by hand for billions of weights is impossible. PyTorch does it automatically.</p>
+
+<p>Tell PyTorch to track a tensor with <code>requires_grad=True</code>:</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+w = torch.tensor(2.0, requires_grad=True)  # a single "weight"
+x = torch.tensor(3.0)                       # input
+
+y = w * x           # forward: y = 2 × 3 = 6
+loss = (y - 5)**2   # how wrong? (6 − 5)² = 1
+
+loss.backward()     # ← PyTorch computes ALL gradients
+print(w.grad)       # tensor(4.)
+# "increase w by 1 → loss increases by 4. So decrease w."
+</pre>
+
+<div class="diagram">
+  <svg viewBox="0 0 580 70" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;font-family:system-ui,sans-serif;font-size:13px">
+    <rect x="10" y="22" width="70" height="28" rx="5" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="45" y="40" text-anchor="middle" fill="#a6e3a1" font-family="Menlo,Consolas,monospace" font-size="11">w = 2.0</text>
+    <line x1="82" y1="36" x2="118" y2="36" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr4)"/>
+    <rect x="120" y="22" width="80" height="28" rx="5" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="160" y="40" text-anchor="middle" fill="#cdd6f4" font-family="Menlo,Consolas,monospace" font-size="11">y = w × x</text>
+    <line x1="202" y1="36" x2="238" y2="36" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr4)"/>
+    <rect x="240" y="22" width="120" height="28" rx="5" fill="#1e1e2e" stroke="#4b5563"/>
+    <text x="300" y="40" text-anchor="middle" fill="#cdd6f4" font-family="Menlo,Consolas,monospace" font-size="11">loss = (y−5)²</text>
+    <line x1="362" y1="36" x2="398" y2="36" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr4)"/>
+    <rect x="400" y="22" width="100" height="28" rx="5" fill="#2563eb" stroke="#2563eb"/>
+    <text x="450" y="37" text-anchor="middle" fill="white" font-size="11" font-weight="600">loss.backward()</text>
+    <text x="450" y="49" text-anchor="middle" fill="#bfdbfe" font-size="9">→ w.grad = 4.0</text>
+    <defs>
+      <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#4b5563"/>
+      </marker>
+    </defs>
+  </svg>
+  <p style="margin-top:.75rem;font-size:.85rem;color:#666;font-family:system-ui,sans-serif">PyTorch traces the computation graph forward, then walks it backward to compute gradients.</p>
+</div>
+
+<h2>4. A real training loop</h2>
+
+<p>Now put it together. This is a complete, working PyTorch training loop — the skeleton of every LLM training run ever written.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+import torch
+import torch.nn as nn
+
+# Model: one Linear layer (a learned matrix multiply)
+model = nn.Linear(1, 1)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+# Data: y = 2x  (we want the model to learn this)
+X = torch.tensor([[1.0], [2.0], [3.0], [4.0]])
+y = torch.tensor([[2.0], [4.0], [6.0], [8.0]])
+
+for step in range(200):
+    pred = model(X)                    # 1. forward pass
+    loss = ((pred - y)**2).mean()      # 2. measure error
+
+    optimizer.zero_grad()              # 3. clear old gradients
+    loss.backward()                    # 4. compute new gradients
+    optimizer.step()                   # 5. adjust weights
+
+    if step % 50 == 0:
+        print(f"Step {step}: loss = {loss.item():.4f}")
+
+# Step   0: loss = 18.3241
+# Step  50: loss =  0.0412
+# Step 100: loss =  0.0093
+# Step 150: loss =  0.0021
+</pre>
+
+<p>Five lines, same every time: forward → loss → zero_grad → backward → step. The model teaches itself from data.</p>
+
+<div class="callout">
+  <strong>Connect to Lesson 2:</strong> Your Python loop from Lesson 2 was <code>for step in range(10000): adjust weights</code>. That pseudocode is exactly steps 3–5 above. You already understood training — now you have the real code.
+</div>
+
+<h2>5. <code>nn.Linear</code> — the transformer's building block</h2>
+
+<p><code>nn.Linear</code> is a matrix multiply with a learned weight matrix. Every single layer in a transformer is built from this one thing.</p>
+
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:1.2rem;border-radius:8px;font-family:Menlo,Consolas,monospace;font-size:.9rem;overflow-x:auto;margin:1rem 0">
+# GPT-2 small feed-forward layer
+ff = nn.Linear(768, 3072)
+print(ff.weight.shape)   # torch.Size([3072, 768])
+                          # ← a 3072×768 learned matrix
+
+# Every forward pass:  output = input @ weight.T + bias
+# That's it. Billions of parameters, same operation.
+</pre>
+
+<p>GPT-2 small has 12 transformer layers. Each has two of these <code>nn.Linear</code> calls. That is the model. You now understand its fundamental operation.</p>
+
+<div class="source">
+  <div class="label">Primary source — Andrej Karpathy builds GPT live</div>
+  <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">Let's build GPT from scratch — Andrej Karpathy (YouTube, 2hr)</a>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:.6rem">Watch from 0:00–25:00. Karpathy writes <code>torch.tensor</code>, <code>nn.Linear</code>, and the training loop you just read — in a real working GPT. Every line will click now.</p>
+  <button class="mark-video-btn" id="vid-btn" onclick="markDone('l4-video','vid-btn','✓ Video watched')">▶ Mark video as watched</button>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz" id="quiz-container">
+  <h3>Check your understanding</h3>
+  <div id="quiz-question" class="question"></div>
+  <div id="quiz-options" class="options"></div>
+  <div id="quiz-feedback" class="feedback"></div>
+  <button id="quiz-next" class="next-btn" style="display:none"></button>
+</div>
+
+<!-- TWEET THIS -->
+<div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
+  <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
+  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.6;margin-bottom:.75rem">"Day 4 ✅ PyTorch from zero<br><br>PyTorch = tensor in → math → tensor out. But it remembers every operation.<br><br>loss.backward() computes every gradient automatically. That's why deep learning scaled.<br><br>@shaktidev001 #LLMengineeringfromscratch"</div>
+  <a href="https://twitter.com/intent/tweet?text=Day%204%20%E2%9C%85%20PyTorch%20from%20zero%0A%0APyTorch%20%3D%20tensor%20in%20%E2%86%92%20math%20%E2%86%92%20tensor%20out.%20But%20it%20remembers%20every%20operation.%0A%0Aloss.backward()%20computes%20every%20gradient%20automatically.%20That%27s%20why%20deep%20learning%20scaled.%0A%0A%40shaktidev001%20%23LLMengineeringfromscratch&url=https%3A%2F%2Fllmengineeringfromscratch.pages.dev" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+</div>
+
+<nav class="lesson-nav">
+  <a href="0003-vectors-and-matrices.html">← Lesson 3: Vectors &amp; Matrices</a>
+  <a href="0005-build-gpt.html">Lesson 5: Build a GPT →</a>
+</nav>
+
+<div class="ask-teacher">
+  <strong>Ask your teacher anything.</strong> What does <code>optimizer.zero_grad()</code> actually do? Why does <code>loss.backward()</code> know which tensors to differentiate? Just ask Claude directly.
+</div>
+
+<script>
+(function () {
+  var questions = [
+    {
+      q: "What does `requires_grad=True` tell PyTorch?",
+      options: [
+        "Load this tensor onto the GPU immediately",
+        "Track every operation on this tensor so gradients can be computed",
+        "Make this tensor read-only during training",
+        "Freeze this tensor so its values never change"
+      ],
+      correct: 1,
+      feedback: "Correct. PyTorch builds a computation graph as operations run. requires_grad=True marks a tensor as one whose gradient we need — then backward() walks the graph to compute it."
+    },
+    {
+      q: "After calling `loss.backward()`, where do the gradients live?",
+      options: [
+        "Returned as the output of backward()",
+        "Saved to a separate file on disk",
+        "In `tensor.grad` for each tensor with requires_grad=True",
+        "In the optimizer object"
+      ],
+      correct: 2,
+      feedback: "Correct. backward() accumulates gradients into the .grad attribute of each tracked tensor. That's why you call optimizer.zero_grad() first — to clear the previous step's gradients."
+    },
+    {
+      q: "`nn.Linear(768, 3072)` creates what shape of weight matrix?",
+      options: [
+        "torch.Size([768])",
+        "torch.Size([768, 3072])",
+        "torch.Size([3072, 768])",
+        "torch.Size([768, 768])"
+      ],
+      correct: 2,
+      feedback: "Correct. nn.Linear(in, out) stores a weight matrix of shape [out, in] = [3072, 768]. PyTorch transposes it during the forward pass: output = input @ weight.T. This is the exact shape in GPT-2's feed-forward layers."
+    }
+  ];
+
+  var current = 0;
+  var answered = false;
+  var qEl = document.getElementById('quiz-question');
+  var oEl = document.getElementById('quiz-options');
+  var fEl = document.getElementById('quiz-feedback');
+  var nBtn = document.getElementById('quiz-next');
+  var progFill = document.getElementById('progress-fill');
+
+  function setProgress(pct) { progFill.style.width = pct + '%'; }
+
+  function renderQuestion() {
+    answered = false;
+    var q = questions[current];
+    setProgress(38 + (current / questions.length) * 15);
+    qEl.textContent = (current + 1) + ' / ' + questions.length + ' — ' + q.q;
+    fEl.textContent = '';
+    nBtn.style.display = 'none';
+    while (oEl.firstChild) oEl.removeChild(oEl.firstChild);
+    q.options.forEach(function (text, i) {
+      var btn = document.createElement('button');
+      btn.className = 'option';
+      btn.textContent = text;
+      btn.addEventListener('click', function () { answer(i); });
+      oEl.appendChild(btn);
+    });
+    nBtn.textContent = current < questions.length - 1 ? 'Next question →' : 'Finish lesson ✓';
+    nBtn.onclick = current < questions.length - 1
+      ? function () { current++; renderQuestion(); }
+      : finish;
+  }
+
+  function answer(i) {
+    if (answered) return;
+    answered = true;
+    var q = questions[current];
+    var btns = oEl.querySelectorAll('.option');
+    btns[i].classList.add(i === q.correct ? 'correct' : 'wrong');
+    if (i !== q.correct) btns[q.correct].classList.add('correct');
+    fEl.textContent = (i === q.correct ? '✓ ' : '✗ Not quite. ') + q.feedback;
+    nBtn.style.display = 'inline-block';
+  }
+
+  function finish() {
+    var container = document.getElementById('quiz-container');
+    while (container.firstChild) container.removeChild(container.firstChild);
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:center;padding:1.5rem 0;font-family:system-ui,sans-serif';
+    var emoji = document.createElement('div');
+    emoji.textContent = '🎉';
+    emoji.style.cssText = 'font-size:2.5rem;margin-bottom:.5rem';
+    var title = document.createElement('div');
+    title.textContent = 'Lesson 4 complete.';
+    title.style.cssText = 'font-weight:700;font-size:1.1rem;margin-bottom:.75rem';
+    var msg = document.createElement('p');
+    msg.style.cssText = 'color:#666;font-size:.9rem;line-height:1.6;margin:0';
+    msg.textContent = 'Run the training loop in Google Colab — watch the loss drop. Then watch Karpathy 0:00–25:00. Next lesson: build a real character-level GPT from scratch. Ask: "What is the next lesson?" when ready.';
+    wrap.appendChild(emoji);
+    wrap.appendChild(title);
+    wrap.appendChild(msg);
+    container.appendChild(wrap);
+    setProgress(53);
+  }
+
+  renderQuestion();
+})();
+
+function markDone(key, btnId, doneText) {
+  localStorage.setItem(key, '1');
+  var btn = document.getElementById(btnId);
+  btn.textContent = doneText;
+  btn.classList.add('done');
+  btn.onclick = null;
+}
+(function () {
+  var entries = [['l4-video', 'vid-btn', '✓ Video watched']];
+  entries.forEach(function (e) {
+    if (localStorage.getItem(e[0])) { markDone(e[0], e[1], e[2]); }
+  });
+})();
+</script>
+
+</body>
+</html>
