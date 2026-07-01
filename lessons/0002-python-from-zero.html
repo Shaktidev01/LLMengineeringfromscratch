@@ -142,7 +142,8 @@ print(sentence)
 <div class="source">
   <div class="label">Where to run this code — free, in your browser</div>
   <a href="https://colab.research.google.com/" target="_blank">Google Colab — free Python environment, no install needed</a>
-  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Create a new notebook, paste the code above, press Shift+Enter. You just ran Python. Do this for every code block in this lesson.</p>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:.6rem">Create a new notebook, paste the code above, press Shift+Enter. You just ran Python. Do this for every code block in this lesson.</p>
+  <button class="mark-video-btn" id="vid-btn" onclick="markDone('l2-code','vid-btn','✓ Code run in Colab')">▶ Mark code as run in Colab</button>
 </div>
 
 <!-- QUIZ -->
@@ -157,9 +158,14 @@ print(sentence)
 <!-- TWEET THIS -->
 <div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
   <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
-  <div id="tweet-text" style="font-size:.95rem;color:#1a1a1a;line-height:1.5;margin-bottom:.75rem">"An LLM is just a loop: show text, measure how wrong the prediction is, nudge weights, repeat millions of times. That's all training is. Learning Python today so I can build one from scratch. Day 2 of my AI journey. #BuildingAI #LearnInPublic"</div>
-  <a id="tweet-link" href="https://twitter.com/intent/tweet?text=An%20LLM%20is%20just%20a%20loop%3A%20show%20text%2C%20measure%20how%20wrong%20the%20prediction%20is%2C%20nudge%20weights%2C%20repeat%20millions%20of%20times.%20That%E2%80%99s%20all%20training%20is.%20Learning%20Python%20today%20so%20I%20can%20build%20one%20from%20scratch.%20Day%202%20of%20my%20AI%20journey.%20%23BuildingAI%20%23LearnInPublic" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.6;margin-bottom:.75rem">"Day 2 ✅ Python from zero<br><br>To build an LLM you only need 4 Python concepts: variables, lists, functions, loops.<br><br>A training loop is literally: for step in range(10000): adjust weights. That's all training is.<br><br>@shaktidev001 #LLMengineeringfromscratch"</div>
+  <a href="https://twitter.com/intent/tweet?text=Day%202%20%E2%9C%85%20Python%20from%20zero%0A%0ATo%20build%20an%20LLM%20you%20only%20need%204%20Python%20concepts%3A%20variables%2C%20lists%2C%20functions%2C%20loops.%0A%0AA%20training%20loop%20is%20literally%3A%20for%20step%20in%20range(10000)%3A%20adjust%20weights.%20That%27s%20all%20training%20is.%0A%0A%40shaktidev001%20%23LLMengineeringfromscratch&url=https%3A%2F%2Fllmengineeringfromscratch.pages.dev" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
 </div>
+
+<nav class="lesson-nav">
+  <a href="0001-what-is-an-llm.html">← Lesson 1: What Is an LLM?</a>
+  <a href="0003-vectors-and-matrices.html">Lesson 3: Vectors &amp; Matrices →</a>
+</nav>
 
 <div class="ask-teacher">
   <strong>Ask your teacher anything.</strong> Confused about any code above? Want to know what <code>loss.backward()</code> actually does? Just ask Claude directly.
@@ -271,6 +277,20 @@ print(sentence)
   }
 
   renderQuestion();
+})();
+
+function markDone(key, btnId, doneText) {
+  localStorage.setItem(key, '1');
+  var btn = document.getElementById(btnId);
+  btn.textContent = doneText;
+  btn.classList.add('done');
+  btn.onclick = null;
+}
+(function () {
+  var entries = [['l2-code', 'vid-btn', '✓ Code run in Colab']];
+  entries.forEach(function (e) {
+    if (localStorage.getItem(e[0])) { markDone(e[0], e[1], e[2]); }
+  });
 })();
 </script>
 

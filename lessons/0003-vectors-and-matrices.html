@@ -201,7 +201,8 @@ M = [[2,  0,  1],
 <div class="source">
   <div class="label">Primary source — watch this after the quiz</div>
   <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">Let's build GPT from scratch — Andrej Karpathy (YouTube, 2hr)</a>
-  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Start at 0:00 — the first 20 minutes walk through exactly these shapes in real PyTorch code. Pause and run along. This is Lesson 4's prep.</p>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:.6rem">Start at 0:00 — the first 20 minutes walk through exactly these shapes in real PyTorch code. Pause and run along. This is Lesson 4's prep.</p>
+  <button class="mark-video-btn" id="vid-btn" onclick="markDone('l3-video','vid-btn','✓ Video watched')">▶ Mark video as watched</button>
 </div>
 
 <!-- QUIZ -->
@@ -216,13 +217,14 @@ M = [[2,  0,  1],
 <!-- TWEET THIS -->
 <div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
   <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
-  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.5;margin-bottom:.75rem">"Day 3 of building an LLM from scratch with zero CS background.<br><br>Mind-blowing insight: when GPT reads 'king', it doesn't see letters. It sees a list of 768 numbers. And king − man + woman ≈ queen. Vector arithmetic on meaning.<br><br>This is real. It works. #LLMengineeringfromscratch"</div>
-  <a href="https://twitter.com/intent/tweet?text=Day%203%20of%20building%20an%20LLM%20from%20scratch%20with%20zero%20CS%20background.%0A%0AMind-blowing%20insight%3A%20when%20GPT%20reads%20%22king%22%2C%20it%20doesn%27t%20see%20letters.%20It%20sees%20a%20list%20of%20768%20numbers.%20And%20king%20%E2%88%92%20man%20%2B%20woman%20%E2%89%88%20queen.%20Vector%20arithmetic%20on%20meaning.%0A%0AThis%20is%20real.%20It%20works.%20%23LLMengineeringfromscratch" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.6;margin-bottom:.75rem">"Day 3 ✅ Vectors &amp; matrices<br><br>GPT doesn't read 'king' — it sees 768 numbers.<br><br>king − man + woman ≈ queen. Vector arithmetic on meaning. This is real.<br><br>Every transformer layer is matrix × vector. Building from scratch, no CS degree.<br><br>@shaktidev001 #LLMengineeringfromscratch"</div>
+  <a href="https://twitter.com/intent/tweet?text=Day%203%20%E2%9C%85%20Vectors%20%26%20matrices%0A%0AGPT%20doesn%27t%20read%20%27king%27%20%E2%80%94%20it%20sees%20768%20numbers.%0A%0Aking%20%E2%88%92%20man%20%2B%20woman%20%E2%89%88%20queen.%20Vector%20arithmetic%20on%20meaning.%20This%20is%20real.%0A%0AEvery%20transformer%20layer%20is%20matrix%20%C3%97%20vector.%20Building%20from%20scratch%2C%20no%20CS%20degree.%0A%0A%40shaktidev001%20%23LLMengineeringfromscratch&url=https%3A%2F%2Fllmengineeringfromscratch.pages.dev" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
 </div>
 
-<p style="font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)">
-  ← <a href="0002-python-from-zero.html">Lesson 2: Python from Zero</a>
-</p>
+<nav class="lesson-nav">
+  <a href="0002-python-from-zero.html">← Lesson 2: Python from Zero</a>
+  <a href="../index.html">Back to course →</a>
+</nav>
 
 <div class="ask-teacher">
   <strong>Ask your teacher anything.</strong> Want to see the king−man+woman math with actual numbers? Confused about dimensions? Just ask Claude directly.
@@ -330,6 +332,20 @@ M = [[2,  0,  1],
   }
 
   renderQuestion();
+})();
+
+function markDone(key, btnId, doneText) {
+  localStorage.setItem(key, '1');
+  var btn = document.getElementById(btnId);
+  btn.textContent = doneText;
+  btn.classList.add('done');
+  btn.onclick = null;
+}
+(function () {
+  var entries = [['l3-video', 'vid-btn', '✓ Video watched']];
+  entries.forEach(function (e) {
+    if (localStorage.getItem(e[0])) { markDone(e[0], e[1], e[2]); }
+  });
 })();
 </script>
 

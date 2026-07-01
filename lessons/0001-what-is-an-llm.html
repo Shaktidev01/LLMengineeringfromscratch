@@ -101,7 +101,8 @@
 <div class="source">
   <div class="label">Primary source — watch after the quiz</div>
   <a href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">Intro to Large Language Models — Andrej Karpathy (YouTube, 1 hour)</a>
-  <p style="margin-top:.4rem;color:#666;margin-bottom:0">Karpathy explains this exact mental model visually. Best single hour you can invest in understanding LLMs. No CS background needed.</p>
+  <p style="margin-top:.4rem;color:#666;margin-bottom:.6rem">Karpathy explains this exact mental model visually. Best single hour you can invest in understanding LLMs. No CS background needed.</p>
+  <button class="mark-video-btn" id="vid-btn" onclick="markDone('l1-video','vid-btn','✓ Video watched')">▶ Mark video as watched</button>
 </div>
 
 <!-- QUIZ -->
@@ -112,6 +113,18 @@
   <div id="quiz-feedback" class="feedback"></div>
   <button id="quiz-next" class="next-btn" style="display:none"></button>
 </div>
+
+<!-- TWEET THIS -->
+<div style="background:#e7f0fd;border:1px solid #2563eb;border-radius:8px;padding:1.2rem 1.4rem;margin:2rem 0;font-family:system-ui,sans-serif">
+  <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem;font-weight:600">Tweet this insight</div>
+  <div style="font-size:.95rem;color:#1a1a1a;line-height:1.6;margin-bottom:.75rem">"Day 1 ✅ What is an LLM?<br><br>LLMs are next-word prediction machines. That's it. Everything else — coding, creativity, reasoning — emerges from scale.<br><br>Building one from scratch. No CS degree.<br><br>@shaktidev001 #LLMengineeringfromscratch"</div>
+  <a href="https://twitter.com/intent/tweet?text=Day%201%20%E2%9C%85%20What%20is%20an%20LLM%3F%0A%0ALLMs%20are%20next-word%20prediction%20machines.%20That%27s%20it.%20Everything%20else%20%E2%80%94%20coding%2C%20creativity%2C%20reasoning%20%E2%80%94%20emerges%20from%20scale.%0A%0ABuilding%20one%20from%20scratch.%20No%20CS%20degree.%0A%0A%40shaktidev001%20%23LLMengineeringfromscratch&url=https%3A%2F%2Fllmengineeringfromscratch.pages.dev" target="_blank" style="display:inline-block;background:#2563eb;color:white;padding:.45rem 1rem;border-radius:6px;text-decoration:none;font-size:.85rem;font-weight:600">Post to Twitter / X →</a>
+</div>
+
+<nav class="lesson-nav">
+  <span></span>
+  <a href="0002-python-from-zero.html">Lesson 2: Python from Zero →</a>
+</nav>
 
 <div class="ask-teacher">
   <strong>Ask your teacher anything.</strong> Type your question directly to Claude — your AI teacher is right here in this session. Confused about parameters? Want to know how this applies to your product idea? Just ask.
@@ -234,6 +247,20 @@
   }
 
   renderQuestion();
+})();
+
+function markDone(key, btnId, doneText) {
+  localStorage.setItem(key, '1');
+  var btn = document.getElementById(btnId);
+  btn.textContent = doneText;
+  btn.classList.add('done');
+  btn.onclick = null;
+}
+(function () {
+  var entries = [['l1-video', 'vid-btn', '✓ Video watched']];
+  entries.forEach(function (e) {
+    if (localStorage.getItem(e[0])) { markDone(e[0], e[1], e[2]); }
+  });
 })();
 </script>
 

@@ -155,3 +155,25 @@ code {
   border-radius: 3px;
   font-size: .85em;
 }
+
+/* Lesson navigation */
+.lesson-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+  font-family: system-ui, sans-serif; font-size: .9rem;
+}
+.lesson-nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.lesson-nav a:hover { text-decoration: underline; }
+.lesson-nav span { color: var(--muted); font-size: .85rem; }
+
+/* Mark video as watched */
+.mark-video-btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  margin-top: .9rem; padding: .45rem 1rem;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: transparent; cursor: pointer;
+  font-family: system-ui, sans-serif; font-size: .85rem;
+  color: var(--muted); transition: all .2s;
+}
+.mark-video-btn:hover { border-color: var(--correct); color: var(--correct); }
+.mark-video-btn.done { border-color: var(--correct); color: var(--correct); background: var(--correct-bg); cursor: default; }
